@@ -1,0 +1,76 @@
+// ---------Typography---------
+$base-font-family: "Pt-Sans", "Helvetica Neue", Helvetica, Arial, sans-serif
+$heading-font-family: "Galano","Avant Garde", Avantgarde, "Century Gothic", CenturyGothic, AppleGothic, sans-serif
+
+// ---------Font Sizes---------
+$base-font-size: 1rem
+$font-size-xs: $base-font-size * 0.685  // 11px
+$font-size-s: $base-font-size * 1.125   // 18px
+$font-size-m: $base-font-size * 1.375   // 22px
+$font-size-l: $base-font-size * 1.65    // 27px
+$font-size-xl: $base-font-size * 2.25   // 36px
+$font-size-xxl: $base-font-size * 2.75  // 44px
+$font-size-xxxl: $base-font-size * 3.75 // 60px
+
+// ---------Line height---------
+$base-line-height: 1.4
+$heading-line-height: 1.2
+
+// ---------Other Sizes---------
+$base-border-radius: 3px
+$base-spacing: $base-line-height * 1em
+$small-spacing: $base-spacing / 2
+$base-z-index: 0
+
+// ---------Colors---------
+
+$black: #2d2d2d
+$dark-gray: #ACA39A
+$gray: #d9d9d9
+$medium-gray: #e5e5e5
+$light-gray: #F7F7F7
+$white: #FFFFFF
+
+$primary-color: $dark-gray
+$secundary-color: $gray
+
+// ---------Font Colors---------
+$base-background-color: $white
+$base-font-color: $black
+$action-color: $primary-color
+
+// ---------Social Colors---------
+$social-twitter: #55acee
+$social-facebook: #3b5998
+$social-google: #dd4b39
+$social-instagram: #3f729b
+$social-pinterest: #cb2027
+$social-whatsapp: #43d854
+
+// ---------Border---------
+$base-border-color: $light-gray
+$base-border: 1px solid $base-border-color
+
+// ---------Shadow---------
+$text-shadow: 0px 1px 3px $black
+$shadow: -3px 3px 3px $gray
+
+// ---------Forms---------
+$form-box-shadow: inset 0 1px 3px rgba(#000, 0.06)
+$form-box-shadow-focus: $form-box-shadow, 0 0 5px adjust-color($action-color, $lightness: -5%, $alpha: -0.3)
+
+// ---------Overlay---------------
+$overlay-shadow: rgba(#000, 0.4)
+
+// ---------Spinner---------------
+$spinner-line-height: 8px
+
+$spinner-bg: if(variable-exists(spinner-bg), $spinner-bg, $medium-gray)
+$spinner-right: if(variable-exists(spinner-right), $spinner-right, $primary-color)
+$spinner-left: if(variable-exists(spinner-left), $spinner-left, $black)
+
+// ---------Media Queries---------
+$mobile-height: 480px
+
+$tablet-width: 768px
+$desktop-width: 1280px

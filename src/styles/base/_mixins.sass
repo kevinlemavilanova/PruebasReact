@@ -1,0 +1,168 @@
+//----MIXINS----
+
+// Add percentage of black to a color
+@function shade($color, $percent)
+  @return mix(black, $color, $percent)
+
+// Bourbon font-source-declaration
+@function font-source-declaration($font-family, $file-path, $file-formats)
+  $src: ()
+  $formats-map: ( eot: "#{$file-path}.eot?#iefix" format("embedded-opentype"), woff2: "#{$file-path}.woff2" format("woff2"), woff: "#{$file-path}.woff" format("woff"), ttf: "#{$file-path}.ttf" format("truetype"), svg: "#{$file-path}.svg##{$font-family}" format("svg"))
+  @each $key, $values in $formats-map
+    @if contains($file-formats, $key)
+      $file-path: nth($values, 1)
+      $font-format: nth($values, 2)
+      $src: append($src, url($file-path) $font-format, comma)
+  @return $src
+
+@function contains($list,$var)
+  $_out: false
+  @each $item in $list
+    @if $item == $var
+      $_out: true
+  @return $_out
+
+//----MIXINS----
+=bg-image($size, $url)
+  background-image: url($url)
+  background-position: center center
+  background-size: $size
+  background-repeat: no-repeat
+
+=bg-color-hover($baseColor)
+  background-color: $baseColor
+  transition: background-color 0.25s ease-in-out
+  cursor: pointer
+  &:hover, &:active, &:focus
+    background-color: shade($baseColor, 15%)
+
+=color-hover($baseColor)
+  color: $baseColor
+  transition: color 0.25s ease-in-out
+  &:hover, &:active, &:focus
+    color: shade($baseColor, 25%)
+
+=button($color)
+  box-sizing: border-box
+  border-radius: 2px
+  padding: 10px
+  color: $color
+  border: 1px solid $color
+  font-size: $font-size-m
+  display: inline-block
+  background-color: transparent
+  cursor: pointer
+  transition: all 0.25s ease-in-out
+  &:hover, &:active, &:focus
+    color: $black
+    background-color: $color
+
+=vertical-centre($height)
+  height: $height
+  line-height: $height !important
+  display: inline-block
+  vertical-align: middle
+
+=size($size)
+  height: $size
+  width: $size
+  box-sizing: border-box
+
+=triangle($direction, $size, $color)
+  height: 0
+  width: 0
+  border-color: transparent
+  border-style: solid
+  border-width: $size / 2
+  @if $direction == up
+    border-bottom-color: $color
+  @else if $direction == right
+    border-left-color: $color
+  @else if $direction == down
+    border-top-color: $color
+  @else if $direction == left
+    border-right-color: $color
+
+=appearance($value)
+  -webkit-appearance: $value
+  -moz-appearance: $value
+  appearance: $value
+
+=placeholder
+  &::-webkit-input-placeholder
+    @content
+
+  &:-moz-placeholder /* Firefox 18- */
+    @content
+
+  &::-moz-placeholder /* Firefox 19+ */
+    @content
+
+  &:-ms-input-placeholder
+    @content
+
+
+/* BOURBON */
+=font-face($font-family, $file-path, $weight: normal, $style: normal, $file-formats: eot woff ttf svg)
+
+  @font-face
+    font-family: $font-family
+    font-style: $style
+    font-weight: $weight
+    src: font-source-declaration($font-family, $file-path, $file-formats)
+
+
+=background-image($images...)
+
+  $webkit-images: ()
+  $spec-images: ()
+
+  @each $image in $images
+    $webkit-image: ()
+    $spec-image: ()
+
+    @if type-of($image) == string
+      $url-str: str-slice($image, 1, 3)
+      $gradient-type: str-slice($image, 1, 6)
+
+      @if $url-str == "url"
+        $webkit-image: $image
+        $spec-image: $image
+      @else if $gradient-type == "linear"
+        $gradients: _linear-gradient-parser($image)
+        $webkit-image: map-get($gradients, webkit-image)
+        $spec-image: map-get($gradients, spec-image)
+      @else if $gradient-type == "radial"
+        $gradients: _radial-gradient-parser($image)
+        $webkit-image: map-get($gradients, webkit-image)
+        $spec-image: map-get($gradients, spec-image)
+
+    $webkit-images: append($webkit-images, $webkit-image, comma)
+    $spec-images: append($spec-images, $spec-image, comma)
+
+  background-image: $webkit-images
+  background-image: $spec-images
+
+
+// ------MEDIA QUERIES------
+// the mediaqueries variables are in variables.sass
+
+=mobile
+  @media (max-width: #{$tablet-width})
+    @content
+
+=tablet
+  @media (min-width: #{$tablet-width}) and (max-width: #{$desktop-width - 1px})
+    @content
+
+=desktop
+  @media (min-width: #{$desktop-width})
+    @content
+
+=mobilescreen
+  @media (max-height: #{$mobile-height})
+    @content
+
+=tabletscreen
+  @media (max-height: #{$tablet-width})
+    @content
