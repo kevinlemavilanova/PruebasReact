@@ -13,9 +13,10 @@ export class Home extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      carrito: []
+      carrito: [],
+      editing: []
     }
-    this.focusInput = null;
+    this.focusInput = null
   }
 
   deleteElement = (id, event) => {
@@ -35,12 +36,29 @@ export class Home extends React.Component {
 
   inEdition = (id, event) => {
     const lista = this.state.carrito.slice()
+    let edition = this.state.editing
     let indice = lista.findIndex((producto) => producto.ref === id)
 
-    lista[indice].editing = true
-    lista[indice].previusValue = event.target.innerHTML
-    this.setState({carrito: lista})
+    edition.element = lista[indice].ref
+    edition.value = event.target.innerHTML
 
+    this.setState({carrito: lista, editing: edition})
+
+  }
+
+  saveEdition = (id, event) => {
+    const lista = this.state.carrito.slice()
+    let edition = this.state.editing
+    let indice = lista.findIndex((producto)=> producto.ref === id)
+
+    if (lista[indice].cantidad === "" ) {
+      lista[indice].cantidad = edition.value
+    } else {
+      edition.value = event.target.value
+    }
+
+    edition = []
+    this.setState({carrito: lista, editing: edition})
   }
 
   updateValue = (id,event) => {
@@ -49,30 +67,18 @@ export class Home extends React.Component {
     /*Si cuando se introduce un numero y el valor es valido (si no es nulo) se guarda en el state, 
      si no lo es y cambiamos de foco restauramos el valor inicial*/
     const lista = this.state.carrito.slice()
+    let edition = this.state.editing
     let indice = lista.findIndex((producto) => producto.ref === id)
 
     if (event.target.value != "") {
-      lista[indice].previusValue = event.target.value
+      edition.value = event.target.value
     }
 
     lista[indice].cantidad = event.target.value
 
-    this.setState({carrito: lista})
+    this.setState({carrito: lista, editing: edition})
   }
 
-  saveEdition = (id, event) => {
-    const lista = this.state.carrito.slice()
-    let indice = lista.findIndex((producto)=> producto.ref === id)
-
-    if (lista[indice].cantidad === "" ) {
-      lista[indice].cantidad = lista[indice].previusValue
-    }
-    else {
-      lista[indice].previusValue = event.target.value
-    }
-    lista[indice].editing = false
-    this.setState({carrito: lista})
-  }
 
   añadirElemento = (id, event) => {
     event.preventDefault()
@@ -94,7 +100,6 @@ export class Home extends React.Component {
     if(this.focusInput) this.focusInput.focus()
   }
 
-
   render = () => {
 
     const productos = store.products.map((producto,i) =>
@@ -109,7 +114,7 @@ export class Home extends React.Component {
       if (producto.cantidad >=0 && (producto.cantidad.length != 0 || producto.cantidad == "" )) {
         let datos = store.products.find((datos)=> datos.id === producto.ref)
         let cantidad = null
-        if (producto.editing) {
+        if (producto.ref === this.state.editing.element && this.state.editing) {
           cantidad = <input id="cantidad" ref={(selectedInput) => this.focusInput = selectedInput} value={producto.cantidad} onChange={this.updateValue.bind(this, producto.ref)} onBlur={this.saveEdition.bind(this, producto.ref)}/>
         }
         else {
