@@ -15,6 +15,7 @@ export class Home extends React.Component {
     this.state = {
       carrito: []
     }
+    this.focusInput = null;
   }
 
   deleteElement = (id, event) => {
@@ -27,10 +28,19 @@ export class Home extends React.Component {
       lista.splice(indice, 1)
     } else {
       lista[indice].cantidad--
-      lista[indice].previusValue--
     }
 
     this.setState({carrito: lista})
+  }
+
+  inEdition = (id, event) => {
+    const lista = this.state.carrito.slice()
+    let indice = lista.findIndex((producto) => producto.ref === id)
+
+    lista[indice].editing = true
+    lista[indice].previusValue = event.target.innerHTML
+    this.setState({carrito: lista})
+
   }
 
   updateValue = (id,event) => {
@@ -54,13 +64,13 @@ export class Home extends React.Component {
     const lista = this.state.carrito.slice()
     let indice = lista.findIndex((producto)=> producto.ref === id)
 
-    if (lista[indice].cantidad === "" ){
+    if (lista[indice].cantidad === "" ) {
       lista[indice].cantidad = lista[indice].previusValue
     }
-    else{
+    else {
       lista[indice].previusValue = event.target.value
     }
-
+    lista[indice].editing = false
     this.setState({carrito: lista})
   }
 
@@ -72,14 +82,18 @@ export class Home extends React.Component {
     // Buscamos si esta en la carrito, si no esta inicializamos a 1, si no la incrementamos
 
     if (indice === -1) {
-      lista.push({ref: id, cantidad: 1, previusValue: 1})
+      lista.push({ref: id, cantidad: 1 })
     } else {
       lista[indice].cantidad++
-      lista[indice].previusValue++
     }
 
     this.setState({carrito: lista})
   }
+
+  componentDidUpdate() {
+    if(this.focusInput) this.focusInput.focus()
+  }
+
 
   render = () => {
 
@@ -92,19 +106,26 @@ export class Home extends React.Component {
       )
 
     const list = this.state.carrito.map((producto, i) => {
-      if(producto.cantidad >=0 && (producto.cantidad.length != 0 || producto.cantidad == "" )){
+      if (producto.cantidad >=0 && (producto.cantidad.length != 0 || producto.cantidad == "" )) {
         let datos = store.products.find((datos)=> datos.id === producto.ref)
+        let cantidad = null
+        if (producto.editing) {
+          cantidad = <input id="cantidad" ref={(selectedInput) => this.focusInput = selectedInput} value={producto.cantidad} onChange={this.updateValue.bind(this, producto.ref)} onBlur={this.saveEdition.bind(this, producto.ref)}/>
+        }
+        else {
+          cantidad = <span id="cantidad" onClick={this.inEdition.bind(this, producto.ref)} >{producto.cantidad}</span>
+        }
         return (
           <li key={i}>
             <h4>{datos.nombre}</h4>
             <label>Cantidad</label>
-            <input id="cantidad" value={producto.cantidad} onChange={this.updateValue.bind(this, producto.ref)} onBlur={this.saveEdition.bind(this, producto.ref)}/>
+            {cantidad}
             <p>{(datos.precio*producto.cantidad)/100}€</p>
             <button onClick={this.deleteElement.bind(this, producto.ref)}><p>x</p></button>
-          </li>)
-        }
+          </li>
+        )
       }
-    )
+    })
 
     return (
       <div id="tienda">
